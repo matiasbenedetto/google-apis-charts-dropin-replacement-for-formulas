@@ -11,7 +11,7 @@ This project provides a simple drop-in replacement for the Google Charts API tex
 - Support for both SVG and PNG output formats
 - Simple status page with usage examples
 
-## How It Works
+## How it Works
 
 This solution works by setting up a server that handles the same URL pattern as the Google Charts API. You simply need to replace the domain in your image URLs from `chart.googleapis.com` to your own domain, and everything else works exactly the same.
 
@@ -27,12 +27,20 @@ https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\i
 
 The server handles the request and generates an image of the formula (SVG or PNG), just like the Google Charts API does.
 
+Result:
+
+![example formula](https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x)=\sum_{n=0}^{\infty}a_nx^n)
+
+
+### Image formats
 SVG format is used by default.
 For PNG format, add the `&format=png` parameter to the URL. Example:
 
 ```
 https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n&format=png
 ```
+
+
 
 ## Usage
 This is a drop-in replacement for the Google Charts API text formula rendering. To use it just replace the old chart google apis url `https://chart.googleapis.com/chart` with this `https://google-charts-formulas.vercel.app`. The old formulas broken becuase of the deprecation of the google service will work again. 
@@ -41,19 +49,21 @@ This is a drop-in replacement for the Google Charts API text formula rendering. 
 Example:
 
 Original Google Charts URL:
+```
 https://chart.googleapis.com/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n
-
+```
 
 Replacement URL:
+```
 https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n
-
+```
 
 ## Graphic charts:
 This project is not related to graphic charts, just to text formulas. If you need to render graphic charts, you can use this project that covers that: https://quickchart.io/
 
 
 ## Inspiration
-I was following a mathematics course and I found all the formulas broken because of Google Charts discontinuation of the service. This project was born to fix the text formulas that were broken and provide a drop-in replacement for the Google Charts API text formula rendering functionality.
+I was taking a mathematics course and found all the formulas broken because of the discontinuation of Google Charts' service. This project was born to fix the text formulas that were broken and provide a drop-in replacement for the Google Charts API text formula rendering functionality.
 
 
 
