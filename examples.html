@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MathJax Delimiters and Dollar Signs Test</title>
+    <title>Examples</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -43,49 +43,57 @@
     </style>
 </head>
 <body>
-    <h1>MathJax Delimiters and Dollar Signs Test</h1>
+    <h1>Examples</h1>
     <p>This page demonstrates how the service handles different math delimiters and dollar signs in formulas.</p>
     
+    <p>See <a href="/" target="_blank" style="color: #0066cc; text-decoration: none;">main page</a></p>
+
     <div class="formula">
         <h3>1. No delimiters (pure math expression)</h3>
         <div class="description">Formula without any delimiters - MathJax handles it correctly</div>
         <img src="/chart?cht=tx&chl=E=mc^2" alt="Formula without delimiters">
-        <div class="url">/chart?cht=tx&chl=E=mc^2</div>
+        <div class="url">https://google-charts-formulas.vercel.app/chart?cht=tx&chl=E=mc^2</div>
     </div>
 
     <div class="formula">
         <h3>2. With inline delimiters \(...\)</h3>
         <div class="description">Formula with inline math delimiters</div>
         <img src="/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)" alt="Formula with inline delimiters">
-        <div class="url">/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)</div>
+        <div class="url">https://google-charts-formulas.vercel.app/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)</div>
     </div>
 
     <div class="formula">
         <h3>3. With display delimiters $$...$$</h3>
         <div class="description">Formula with display math delimiters</div>
         <img src="/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$" alt="Formula with display delimiters">
-        <div class="url">/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$</div>
+        <div class="url">https://google-charts-formulas.vercel.app/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$</div>
     </div>
 
     <div class="formula">
         <h3>4. With single dollar signs</h3>
         <div class="description">Formula with single dollar signs - delimiters are removed</div>
         <img src="/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$" alt="Formula with single dollar signs">
-        <div class="url">/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$</div>
+        <div class="url">https://google-charts-formulas.vercel.app/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$</div>
     </div>
 
     <div class="formula">
         <h3>5. Text with currency (escaped dollar sign)</h3>
         <div class="description">Text with currency symbol - dollar sign escaped with backslash</div>
         <img src="/chart?cht=tx&chl=\text{The cost is }\$5.00" alt="Text with escaped dollar sign">
-        <div class="url">/chart?cht=tx&chl=\text{The cost is }\$5.00</div>
+        <div class="url">https://google-charts-formulas.vercel.app/chart?cht=tx&chl=\text{The cost is }\$5.00</div>
     </div>
 
     <div class="formula">
         <h3>6. Dollar sign in actual math</h3>
         <div class="description">Using $ as a math symbol (not as a delimiter or currency)</div>
         <img src="/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n" alt="Formula with dollar sign in math">
-        <div class="url">/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</div>
+        <div class="url">https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</div>
     </div>
+
+    <footer style="margin-top: 100px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666;">
+        <p>Found a bug? <a href="https://github.com/matiasbenedetto/google-apis-charts-dropin-replacement-for-formulas/issues" target="_blank" style="color: #0066cc; text-decoration: none;">Report it here!</a></p>
+        <p>Vibe implemented by <a href="https://mebenedetto.com" target="_blank" style="color: #0066cc; text-decoration: none;">Matias Benedetto</a></p>
+        <p><a href="https://github.com/matiasbenedetto/google-apis-charts-dropin-replacement-for-formulas" target="_blank" style="color: #0066cc; text-decoration: none;">Source code</a></p>
+    </footer>
 </body>
 </html>
