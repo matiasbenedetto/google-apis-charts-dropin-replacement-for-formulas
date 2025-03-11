@@ -9,21 +9,24 @@
 const express = require('express');
 const path = require('path');
 const mathjax = require('mathjax-node');
-const { createCanvas } = require('canvas');
+const sharp = require('sharp');
+const svg2img = require('svg2img');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize MathJax
+// Initialize MathJax with specific configuration to avoid $ symbols
 mathjax.config({
     MathJax: {
-        SVG: {
-            font: 'TeX',
-            mtextFontInherit: true,
-            linebreaks: { automatic: true }
+        tex2jax: {
+            inlineMath: [],  // No inline math delimiters
+            displayMath: []  // No display math delimiters
         }
     }
 });
+
+// Start MathJax
+mathjax.start();
 
 // Serve a simple status page at the root
 app.get('/', (req, res) => {
@@ -72,7 +75,38 @@ app.get('/chart', async (req, res) => {
     
     try {
         // Decode the formula
-        const formula = decodeURIComponent(chl);
+        let formula = decodeURIComponent(chl);
+        
+        // Handle dollar signs in the formula
+        // For actual math expressions, we don't need to add delimiters
+        // MathJax-node will handle the formula correctly without explicit delimiters
+        
+        // If the formula has single $ delimiters, remove them as they can cause issues
+        if (formula.startsWith('$') && formula.endsWith('$') && 
+            !(formula.startsWith('$$') && formula.endsWith('$$'))) {
+            formula = formula.substring(1, formula.length - 1);
+        }
+
+        // If the formula has escaped backslash delimiters, clean them up
+        // as they might have been double-escaped in the URL
+        if (formula.includes('\\\(') || formula.includes('\\\)') || 
+            formula.includes('\\\[') || formula.includes('\\\]')) {
+            formula = formula.replace(/\\\\\(/g, '\\(')
+                       .replace(/\\\\\)/g, '\\)')
+                       .replace(/\\\\\[/g, '\\[')
+                       .replace(/\\\\\]/g, '\\]');
+        }
+        
+        // Escape literal dollar signs in text to prevent them from being treated as delimiters
+        // This is important for currency values like $2.50
+        // In LaTeX, dollar signs should be escaped with a backslash: \$
+        formula = formula.replace(/([^\\])\$(\d)/g, '$1\\$$2');
+        
+        // Make sure any already escaped dollar signs (\$) are properly formatted for MathJax
+        // This ensures that \$ is preserved as a literal dollar sign in the output
+        if (formula.includes('\\$')) {
+            formula = formula.replace(/\\\$/g, '\\$');
+        }
         
         // Parse color settings from chf parameter
         let textColor = '#000000';
@@ -96,15 +130,23 @@ app.get('/chart', async (req, res) => {
         }
         
         // Process the formula with MathJax
+        // Wrap the formula in display math mode but without $ symbols
         const result = await mathjax.typeset({
             math: formula,
             format: 'TeX',
             svg: true,
-            svgNode: true,
+            ex: 6,               // Font size scaling factor
+            width: 100,          // Width in ex units
+            linebreaks: true,     // Enable linebreaks
+            equationNumbers: 'none'  // No equation numbers
         });
         
         // Apply styling to the SVG
         let svgContent = result.svg;
+        
+        // We want to keep $ symbols in the formula as they are part of the math notation
+        // MathJax should have already processed the formula with the correct dollar signs
+        // No need to remove dollar signs from the SVG content as they are properly rendered
         
         // Apply text color if different from default black
         if (textColor !== '#000000') {
@@ -113,9 +155,26 @@ app.get('/chart', async (req, res) => {
                                   .replace(/stroke="currentColor"/g, `stroke="${textColor}"`);  
         }
         
-        // Set the content type to SVG
-        res.setHeader('Content-Type', 'image/svg+xml');
-        res.send(svgContent);
+        // Check if we need to convert to PNG (for compatibility)
+        const format = req.query.format || '';
+        if (format.toLowerCase() === 'png') {
+            // Convert SVG to PNG using svg2img
+            svg2img(svgContent, (error, buffer) => {
+                if (error) {
+                    console.error('Error converting SVG to PNG:', error);
+                    res.status(500).send('Error converting formula to PNG');
+                    return;
+                }
+                
+                // Set the content type to PNG
+                res.setHeader('Content-Type', 'image/png');
+                res.send(buffer);
+            });
+        } else {
+            // Set the content type to SVG
+            res.setHeader('Content-Type', 'image/svg+xml');
+            res.send(svgContent);
+        }
     } catch (error) {
         console.error('Error processing formula:', error);
         res.status(500).send('Error processing formula');

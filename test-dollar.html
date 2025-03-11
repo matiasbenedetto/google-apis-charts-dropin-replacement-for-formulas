@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MathJax Delimiters and Dollar Signs Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .formula {
+            margin: 20px 0;
+            padding: 10px;
+            border: 1px solid #eee;
+            background-color: #f9f9f9;
+        }
+        img {
+            display: block;
+            margin: 10px 0;
+            background-color: #fff;
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+        h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .description {
+            color: #666;
+            font-style: italic;
+            margin-bottom: 10px;
+        }
+        .url {
+            font-family: monospace;
+            font-size: 12px;
+            color: #555;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <h1>MathJax Delimiters and Dollar Signs Test</h1>
+    <p>This page demonstrates how the service handles different math delimiters and dollar signs in formulas.</p>
+    
+    <div class="formula">
+        <h3>1. No delimiters (pure math expression)</h3>
+        <div class="description">Formula without any delimiters - MathJax handles it correctly</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=E=mc^2" alt="Formula without delimiters">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=E=mc^2</div>
+    </div>
+
+    <div class="formula">
+        <h3>2. With inline delimiters \(...\)</h3>
+        <div class="description">Formula with inline math delimiters</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)" alt="Formula with inline delimiters">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)</div>
+    </div>
+
+    <div class="formula">
+        <h3>3. With display delimiters $$...$$</h3>
+        <div class="description">Formula with display math delimiters</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$" alt="Formula with display delimiters">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$</div>
+    </div>
+
+    <div class="formula">
+        <h3>4. With single dollar signs</h3>
+        <div class="description">Formula with single dollar signs - delimiters are removed</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$" alt="Formula with single dollar signs">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$</div>
+    </div>
+
+    <div class="formula">
+        <h3>5. Text with currency (escaped dollar sign)</h3>
+        <div class="description">Text with currency symbol - dollar sign escaped with backslash</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=The%20cost%20is%20\$5.00" alt="Text with escaped dollar sign">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=The%20cost%20is%20\$5.00</div>
+    </div>
+
+    <div class="formula">
+        <h3>6. Mixed math and currency</h3>
+        <div class="description">Formula with both math and currency symbols</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=\text{Total cost: }\$25.99%20+%20\$10%20=%20\$35.99" alt="Formula with math and currency">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=\text{Total cost: }\$25.99%20+%20\$10%20=%20\$35.99</div>
+    </div>
+
+    <div class="formula">
+        <h3>7. Dollar sign in actual math</h3>
+        <div class="description">Using $ as a math symbol (not as a delimiter or currency)</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n" alt="Formula with dollar sign in math">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</div>
+    </div>
+</body>
+</html>

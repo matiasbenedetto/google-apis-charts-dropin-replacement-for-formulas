@@ -30,7 +30,7 @@ The server handles the request and generates an SVG image of the formula, just l
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v20.11.1 specifically required for deployment)
 - npm
 
 ### Setup
@@ -125,6 +125,47 @@ The server supports the same styling parameters as the Google Charts API:
 <!-- Blue text -->
 <img src="https://your-domain.com/chart?cht=tx&chf=a,s,0000FF|bg,s,FFFFFF00&chl=%5Cint_%7B0%7D%5E%7B%5Cinfty%7D%20e%5E%7B-x%7D%20dx%20%3D%201">
 ```
+
+### PNG Format Option
+
+By default, the server returns SVG images. If you need PNG format for better compatibility with some environments, you can use the `format=png` parameter:
+
+```html
+<!-- Formula rendered as PNG -->
+<img src="https://your-domain.com/chart?cht=tx&chl=E%3Dmc%5E2&format=png">
+```
+
+### Math Delimiters and Dollar Signs
+
+The service uses MathJax for rendering formulas, which has specific rules for math delimiters:
+
+- Default delimiters are `$$...$$` and `\[...\]` for displayed mathematics
+- `\(...\)` is used for in-line mathematics
+- Single dollar signs `$...$` are not used as delimiters by default to avoid accidentally treating text as math
+
+When using this service:
+
+1. You can use math expressions directly without delimiters: `chl=E=mc^2`
+2. You can include proper delimiters in your formula if needed: `chl=\(E=mc^2\)` or `chl=$$E=mc^2$$`
+3. If you use single dollar signs (`$...$`), they will be automatically removed to avoid delimiter confusion
+4. For actual dollar signs in text (like currency), escape them with a backslash: `\$5.00`
+
+Examples:
+```html
+<!-- Simple formula without delimiters -->
+<img src="https://your-domain.com/chart?cht=tx&chl=E=mc^2">
+
+<!-- Formula with inline delimiters -->
+<img src="https://your-domain.com/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)">
+
+<!-- Formula with display delimiters -->
+<img src="https://your-domain.com/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$">
+
+<!-- Text with currency symbol -->
+<img src="https://your-domain.com/chart?cht=tx&chl=The%20cost%20is%20\$5.00">
+```
+
+You can view a complete test page with examples at `/test-dollar.html` when running the server locally.
 
 ## Testing
 
