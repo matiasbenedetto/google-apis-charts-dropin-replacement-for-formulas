@@ -77,19 +77,12 @@
     <div class="formula">
         <h3>5. Text with currency (escaped dollar sign)</h3>
         <div class="description">Text with currency symbol - dollar sign escaped with backslash</div>
-        <img src="http://localhost:3000/chart?cht=tx&chl=The%20cost%20is%20\$5.00" alt="Text with escaped dollar sign">
-        <div class="url">http://localhost:3000/chart?cht=tx&chl=The%20cost%20is%20\$5.00</div>
+        <img src="http://localhost:3000/chart?cht=tx&chl=\text{The cost is }\$5.00" alt="Text with escaped dollar sign">
+        <div class="url">http://localhost:3000/chart?cht=tx&chl=\text{The cost is }\$5.00</div>
     </div>
 
     <div class="formula">
-        <h3>6. Mixed math and currency</h3>
-        <div class="description">Formula with both math and currency symbols</div>
-        <img src="http://localhost:3000/chart?cht=tx&chl=\text{Total cost: }\$25.99%20+%20\$10%20=%20\$35.99" alt="Formula with math and currency">
-        <div class="url">http://localhost:3000/chart?cht=tx&chl=\text{Total cost: }\$25.99%20+%20\$10%20=%20\$35.99</div>
-    </div>
-
-    <div class="formula">
-        <h3>7. Dollar sign in actual math</h3>
+        <h3>6. Dollar sign in actual math</h3>
         <div class="description">Using $ as a math symbol (not as a delimiter or currency)</div>
         <img src="http://localhost:3000/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n" alt="Formula with dollar sign in math">
         <div class="url">http://localhost:3000/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</div>

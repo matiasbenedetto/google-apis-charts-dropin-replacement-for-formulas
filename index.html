@@ -1,12 +1,33 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Charts API Replacement</title>
-    <meta http-equiv="refresh" content="0;url=/" />
-</head>
-<body>
-    <p>Redirecting to the status page...</p>
-</body>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Google Charts API Replacement</title>
+        <style>
+            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+            h1 { color: #333; }
+            .example { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
+            img { display: block; margin: 10px 0; }
+            code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+        </style>
+    </head>
+    <body>
+        <h1>Google Charts API Replacement Server</h1>
+        <p>This server is running as a drop-in replacement for the Google Charts API text formula rendering.</p>
+        
+        <div class="example">
+            <h2>Example Usage</h2>
+            <p>Original Google Charts URL:</p>
+            <code>https://chart.googleapis.com/chart?cht=tx&chf=a,s,000000|bg,s,FFFFFF00&chl=%5Cforall%2C%20%5Cexists</code>
+            
+            <p>Replacement URL (this server):</p>
+            <code>${req.protocol}://${req.get('host')}/chart?cht=tx&chf=a,s,000000|bg,s,FFFFFF00&chl=%5Cforall%2C%20%5Cexists</code>
+            
+            <p>Result:</p>
+            <img src="/chart?cht=tx&chf=a,s,000000|bg,s,FFFFFF00&chl=%5Cforall%2C%20%5Cexists" alt="Formula Example">
+        </div>
+        
+        <p>Server status: <strong>Running</strong></p>
+    </body>
 </html>

@@ -30,6 +30,11 @@ mjAPI.config({
         NN: "\\mathbb{N}",
         ZZ: "\\mathbb{Z}"
       }
+    },
+    // Add HTML entities support
+    entities: {
+      // Add HTML entities that MathJax should recognize
+      "&nbsp;": "\u00A0"
     }
   }
 });
@@ -38,39 +43,9 @@ mjAPI.config({
 mjAPI.start();
 
 // Serve a simple status page at the root
+// serve index.html
 app.get('/', (req, res) => {
-    res.send(`
-        <html>
-            <head>
-                <title>Google Charts API Replacement</title>
-                <style>
-                    body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-                    h1 { color: #333; }
-                    .example { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
-                    img { display: block; margin: 10px 0; }
-                    code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
-                </style>
-            </head>
-            <body>
-                <h1>Google Charts API Replacement Server</h1>
-                <p>This server is running as a drop-in replacement for the Google Charts API text formula rendering.</p>
-                
-                <div class="example">
-                    <h2>Example Usage</h2>
-                    <p>Original Google Charts URL:</p>
-                    <code>https://chart.googleapis.com/chart?cht=tx&chf=a,s,000000|bg,s,FFFFFF00&chl=%5Cforall%2C%20%5Cexists</code>
-                    
-                    <p>Replacement URL (this server):</p>
-                    <code>${req.protocol}://${req.get('host')}/chart?cht=tx&chf=a,s,000000|bg,s,FFFFFF00&chl=%5Cforall%2C%20%5Cexists</code>
-                    
-                    <p>Result:</p>
-                    <img src="/chart?cht=tx&chf=a,s,000000|bg,s,FFFFFF00&chl=%5Cforall%2C%20%5Cexists" alt="Formula Example">
-                </div>
-                
-                <p>Server status: <strong>Running</strong></p>
-            </body>
-        </html>
-    `);
+    res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 // Main chart endpoint - mirrors the Google Charts API endpoint
@@ -121,6 +96,12 @@ app.get('/chart', async (req, res) => {
             formula = formula.replace(/\\\$/g, '\\$');
         }
         
+        // Handle \text{} command - ensure it's properly processed
+        // Replace \text with \textrm which has better support in MathJax-node
+        if (formula.includes('\\text{')) {
+            formula = formula.replace(/\\text\{/g, '\\textrm{');
+        }
+        
         // Parse color settings from chf parameter
         let textColor = '#000000';
         let backgroundColor = 'transparent';
@@ -155,6 +136,7 @@ app.get('/chart', async (req, res) => {
                 if (!data.errors) {
                     resolve(data);
                 } else {
+                    console.error('MathJax Error:', data.errors);
                     reject(new Error(data.errors));
                 }
             });
@@ -163,10 +145,20 @@ app.get('/chart', async (req, res) => {
         // Get the SVG content
         let svgContent = result.svg;
         
+        // Fix any XML entity issues by replacing problematic entities
+        svgContent = svgContent
+            .replace(/&nbsp;/g, ' ')  // Replace &nbsp; with space
+            .replace(/&(?!(amp|lt|gt|quot|apos);)/g, '&amp;');  // Properly escape ampersands
+        
+        // Make sure the SVG has proper XML declaration
+        if (!svgContent.startsWith('<?xml')) {
+            svgContent = '<?xml version="1.0" standalone="no"?>\n' + svgContent;
+        }
+        
         // Apply text color if different from default black
         if (textColor !== '#000000') {
-            svgContent = svgContent.replace(/<svg/, `<svg style="color: ${textColor};"`)
-                                  .replace(/fill="currentColor"/g, `fill="${textColor}"`)
+            svgContent = svgContent.replace(/<svg/, `<svg style="color: ${textColor};"`)                                   
+                                  .replace(/fill="currentColor"/g, `fill="${textColor}"`)                                   
                                   .replace(/stroke="currentColor"/g, `stroke="${textColor}"`);
         }
         
@@ -204,6 +196,8 @@ app.get('/chart', async (req, res) => {
         res.send(errorSvg);
     }
 });
+
+
 
 // serve examples.html
 app.get('/examples', (req, res) => {
