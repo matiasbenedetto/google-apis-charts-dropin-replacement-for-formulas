@@ -62,9 +62,10 @@ app.get('/chart', async (req, res) => {
         let formula = decodeURIComponent(chl);
         
         // Handle dollar signs in the formula
-        // If the formula has single $ delimiters, remove them as they can cause issues
-        if (formula.startsWith('$') && formula.endsWith('$') && 
-            !(formula.startsWith('$$') && formula.endsWith('$$'))) {
+        // If the formula has single $ or double $$ delimiters, remove them as they can cause issues
+        if (formula.startsWith('$$') && formula.endsWith('$$')) {
+            formula = formula.substring(2, formula.length - 2);
+        } else if (formula.startsWith('$') && formula.endsWith('$')) {
             formula = formula.substring(1, formula.length - 1);
         }
 
