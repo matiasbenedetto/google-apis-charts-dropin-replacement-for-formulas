@@ -11,12 +11,12 @@
   ],
   "routes": [
     {
-      "src": "/chart",
-      "dest": "server.js"
+      "src": "/chart(.*)",
+      "dest": "/server.js"
     },
     {
       "src": "/(.*)",
-      "dest": "server.js"
+      "dest": "/server.js"
     }
   ]
 }

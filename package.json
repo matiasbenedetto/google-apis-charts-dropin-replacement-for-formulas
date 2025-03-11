@@ -5,7 +5,7 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "vercel-build": "echo 'Building for Vercel deployment'",
+    "vercel-build": "npm install --no-optional && echo 'Building for Vercel deployment'",
     "dev": "node server.js"
   },
   "keywords": [

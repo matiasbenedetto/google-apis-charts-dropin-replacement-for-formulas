@@ -8,25 +8,28 @@
 
 const express = require('express');
 const path = require('path');
-const mathjax = require('mathjax-node');
+// Use mathjax-node with explicit file paths for Vercel compatibility
+const mjAPI = require('mathjax-node');
 const sharp = require('sharp');
 const svg2img = require('svg2img');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Initialize MathJax with specific configuration to avoid $ symbols
-mathjax.config({
+// Configure MathJax for serverless environment
+mjAPI.config({
     MathJax: {
         tex2jax: {
             inlineMath: [],  // No inline math delimiters
             displayMath: []  // No display math delimiters
         }
-    }
+    },
+    // Disable automatic loading of components that might cause file system issues
+    fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/fonts/HTML-CSS'
 });
 
 // Start MathJax
-mathjax.start();
+mjAPI.start();
 
 // Serve a simple status page at the root
 app.get('/', (req, res) => {
@@ -74,6 +77,7 @@ app.get('/chart', async (req, res) => {
     }
     
     try {
+        // console.log('Processing chart request with parameters:', req.query);
         // Decode the formula
         let formula = decodeURIComponent(chl);
         
@@ -131,14 +135,15 @@ app.get('/chart', async (req, res) => {
         
         // Process the formula with MathJax
         // Wrap the formula in display math mode but without $ symbols
-        const result = await mathjax.typeset({
+        const result = await mjAPI.typeset({
             math: formula,
             format: 'TeX',
             svg: true,
             ex: 6,               // Font size scaling factor
             width: 100,          // Width in ex units
             linebreaks: true,     // Enable linebreaks
-            equationNumbers: 'none'  // No equation numbers
+            equationNumbers: 'none',  // No equation numbers
+            timeout: 30 * 1000    // Increase timeout for complex formulas
         });
         
         // Apply styling to the SVG
@@ -177,8 +182,22 @@ app.get('/chart', async (req, res) => {
         }
     } catch (error) {
         console.error('Error processing formula:', error);
-        res.status(500).send('Error processing formula');
+        
+        // Create a fallback SVG for error cases
+        const errorSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="300" height="50">
+            <text x="10" y="30" fill="#000000" font-family="monospace">
+                Error rendering formula
+            </text>
+        </svg>`;
+        
+        res.setHeader('Content-Type', 'image/svg+xml');
+        res.send(errorSvg);
     }
+});
+
+// serve examples.html
+app.get('/examples', (req, res) => {
+    res.sendFile(path.join(__dirname, 'examples.html'));
 });
 
 // For local development

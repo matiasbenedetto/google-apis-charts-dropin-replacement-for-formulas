@@ -30,7 +30,7 @@ The server handles the request and generates an SVG image of the formula, just l
 
 ### Prerequisites
 
-- Node.js (v20.x required for deployment)
+- Node.js (v20.11.1 required for deployment)
 - npm
 
 ### Setup
@@ -71,7 +71,7 @@ vercel login
 3. Deploy the project:
 
 ```bash
-vercel
+vercel --prod
 ```
 
 Alternatively, you can deploy directly from the Vercel dashboard:
@@ -82,6 +82,19 @@ Alternatively, you can deploy directly from the Vercel dashboard:
 4. Import your repository
 5. Keep the default settings (the project includes a `vercel.json` configuration file)
 6. Click 'Deploy'
+
+### Troubleshooting Vercel Deployment
+
+If you encounter issues with the `/chart` endpoint on Vercel, check the following:
+
+1. Make sure your Vercel project is using Node.js version 20.11.1 (specified in both package.json and vercel.json)
+2. Check the Vercel deployment logs for any errors related to MathJax
+3. The project has been configured to handle file system limitations in Vercel's serverless environment
+4. If you see errors related to missing MathJax files, try redeploying with the `--force` flag:
+
+```bash
+vercel --prod --force
+```
 
 After deployment, Vercel will provide you with a domain (e.g., `https://your-project.vercel.app`). Update your image URLs to use this domain instead of `chart.googleapis.com`.
 
