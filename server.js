@@ -93,14 +93,21 @@ app.get('/chart', async (req, res) => {
             formula = formula.substring(1, formula.length - 1);
         }
 
-        // If the formula has escaped backslash delimiters, clean them up
-        // as they might have been double-escaped in the URL
+        // Handle TeX delimiters \( \) \[ \]
+        // First, check if the formula is wrapped in these delimiters and remove them
+        // MathJax-node will process the formula in display mode regardless
+        if ((formula.startsWith('\\(') && formula.endsWith('\\)')) || 
+            (formula.startsWith('\\[') && formula.endsWith('\\]'))) {
+            formula = formula.substring(2, formula.length - 2);
+        }
+        
+        // If there are any remaining escaped delimiters in the formula, clean them up
         if (formula.includes('\\(') || formula.includes('\\)') || 
             formula.includes('\\[') || formula.includes('\\]')) {
-            formula = formula.replace(/\\\(/g, '\\(')
-                       .replace(/\\\)/g, '\\)')
-                       .replace(/\\\[/g, '\\[')
-                       .replace(/\\\]/g, '\\]');
+            formula = formula.replace(/\\\(/g, '(')
+                       .replace(/\\\)/g, ')')
+                       .replace(/\\\[/g, '[')
+                       .replace(/\\\]/g, ']');
         }
         
         // Escape literal dollar signs in text to prevent them from being treated as delimiters
