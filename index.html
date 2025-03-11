@@ -125,6 +125,53 @@
             margin-bottom: 15px;
             color: var(--secondary-color);
         }
+
+        .formula {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 25px;
+            margin-bottom: 25px;
+            transition: var(--transition);
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        .formula {
+            position: relative;
+        }
+        
+        .formula:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .formula h3 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .toggle-icon {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            transition: var(--transition);
+        }
+        
+        .formula-content {
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            max-height: 1000px;
+        }
+        
+        .formula-content.collapsed {
+            max-height: 0;
+        }
+        
+        .text-center {
+            text-align: center;
+            margin: 20px 0;
+        }
         
         .formula-img {
             display: block;
@@ -146,6 +193,9 @@
             font-weight: 500;
             margin-top: 10px;
             transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
         }
         
         .cta-button:hover {
@@ -246,6 +296,16 @@
             margin-top: 20px;
             font-size: 0.9rem;
         }
+
+        .examples {
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            max-height: 0;
+        }
+        
+        .examples.visible {
+            max-height: 3000px;
+        }
         
         @media (max-width: 768px) {
             .container {
@@ -269,8 +329,44 @@
                 gap: 15px;
                 align-items: center;
             }
+
         }
     </style>
+    <script>
+        // Simple toggle functionality for examples
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleButton = document.querySelector('.cta-button');
+            const examples = document.querySelector('.examples');
+
+            // Toggle examples section visibility with smooth animation
+            toggleButton.addEventListener('click', () => {
+                examples.classList.toggle('visible');
+                toggleButton.textContent = examples.classList.contains('visible') ? 'Hide Examples' : 'View More Examples';
+                
+                // Scroll to examples section when showing
+                if (examples.classList.contains('visible')) {
+                    setTimeout(() => {
+                        examples.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    }, 100);
+                }
+            });
+            
+            // Add toggle functionality for individual examples
+            const cards = document.querySelectorAll('.card h3');
+            
+            cards.forEach(header => {
+                const content = header.nextElementSibling;
+                const icon = header.querySelector('.toggle-icon');
+                
+                if (content && icon) {
+                    header.addEventListener('click', () => {
+                        content.classList.toggle('collapsed');
+                        icon.textContent = content.classList.contains('collapsed') ? '+' : '-';
+                    });
+                }
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="container">
@@ -299,7 +395,103 @@
         </div>
         
         <div class="text-center">
-            <a href="/examples" class="cta-button">View More Examples</a>
+            <button class="cta-button">View More Examples</button>
+        </div>
+
+        <div class="examples">
+            <header>
+                <h2>Formula Examples</h2>
+            </header>
+
+            <div class="card">
+                <h3>1. No delimiters (pure math expression) <span class="toggle-icon">-</span></h3>
+                <div class="formula-content">
+                    <div class="url-container">
+                        <p class="url-label">Formula without any delimiters - MathJax handles it correctly</p>
+                        <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=E=mc^2</code>
+                    </div>
+                    
+                    <div class="result-container">
+                        <p class="result-label">Result:</p>
+                        <img class="formula-img" src="/chart?cht=tx&chl=E=mc^2" alt="Formula without delimiters">
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card">
+                <h3>2. With inline delimiters \(...\) <span class="toggle-icon">-</span></h3>
+                <div class="formula-content">
+                    <div class="url-container">
+                        <p class="url-label">Formula with inline math delimiters</p>
+                        <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)</code>
+                    </div>
+                    
+                    <div class="result-container">
+                        <p class="result-label">Result:</p>
+                        <img class="formula-img" src="/chart?cht=tx&chl=\(f(x)%20=%20\sin(x)\)" alt="Formula with inline delimiters">
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card">
+                <h3>3. With display delimiters $$...$$  <span class="toggle-icon">-</span></h3>
+                <div class="formula-content">
+                    <div class="url-container">
+                        <p class="url-label">Formula with display math delimiters</p>
+                        <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$</code>
+                    </div>
+                    
+                    <div class="result-container">
+                        <p class="result-label">Result:</p>
+                        <img class="formula-img" src="/chart?cht=tx&chl=$$\int_{a}^{b}%20f(x)%20dx$$" alt="Formula with display delimiters">
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card">
+                <h3>4. With single dollar signs <span class="toggle-icon">-</span></h3>
+                <div class="formula-content">
+                    <div class="url-container">
+                        <p class="url-label">Formula with single dollar signs - delimiters are removed</p>
+                        <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$</code>
+                    </div>
+                    
+                    <div class="result-container">
+                        <p class="result-label">Result:</p>
+                        <img class="formula-img" src="/chart?cht=tx&chl=$x^2%20+%20y^2%20=%20z^2$" alt="Formula with single dollar signs">
+                    </div>
+                </div>
+            </div>
+    
+            <div class="card">
+                <h3>5. Text with currency (escaped dollar sign) <span class="toggle-icon">-</span></h3>
+                <div class="formula-content">
+                    <div class="url-container">
+                        <p class="url-label">Text with currency symbol - dollar sign escaped with backslash</p>
+                        <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=\text{The cost is }\$5.00</code>
+                    </div>
+                    
+                    <div class="result-container">
+                        <p class="result-label">Result:</p>
+                        <img class="formula-img" src="/chart?cht=tx&chl=\text{The cost is }\$5.00" alt="Text with escaped dollar sign">
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>5. Complex equation with fractions <span class="toggle-icon">-</span></h3>
+                <div class="formula-content">
+                    <div class="url-container">
+                        <p class="url-label">A more complex equation with fractions and multiple elements</p>
+                        <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=\frac{-b \pm \sqrt{b^2-4ac}}{2a}</code>
+                    </div>
+                    
+                    <div class="result-container">
+                        <p class="result-label">Result:</p>
+                        <img class="formula-img" src="/chart?cht=tx&chl=\frac{-b \pm \sqrt{b^2-4ac}}{2a}" alt="Quadratic formula">
+                    </div>
+                </div>
+            </div>
         </div>
         
         <div class="status-container">
