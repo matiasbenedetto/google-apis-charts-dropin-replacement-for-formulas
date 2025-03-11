@@ -1,40 +1,329 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Google Charts API Replacement</title>
-        <style>
-            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-            h1 { color: #333; }
-            .example { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 5px; }
-            img { display: block; margin: 10px 0; }
-            code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
-        </style>
-    </head>
-    <body>
-        <h1>Google Charts API Replacement Server</h1>
-        <p>This server is running as a drop-in replacement for the Google Charts API text formula rendering.</p>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Charts API Replacement</title>
+    <style>
+        :root {
+            --primary-color: #4285F4;
+            --secondary-color: #34A853;
+            --accent-color: #FBBC05;
+            --dark-color: #202124;
+            --light-color: #F8F9FA;
+            --border-radius: 8px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
         
-        <div class="example">
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+            line-height: 1.6;
+            color: var(--dark-color);
+            background-color: var(--light-color);
+            background-image: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 16px;
+            position: relative;
+            display: inline-block;
+        }
+        
+        h1::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            border-radius: 2px;
+        }
+        
+        .tagline {
+            font-size: 1.2rem;
+            color: #5f6368;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: var(--transition);
+            border-top: 4px solid var(--primary-color);
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+        
+        .url-container {
+            margin: 15px 0;
+        }
+        
+        .url-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #5f6368;
+        }
+        
+        code {
+            display: block;
+            background: #f1f3f4;
+            padding: 12px 16px;
+            border-radius: var(--border-radius);
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border-left: 3px solid var(--primary-color);
+            margin-bottom: 15px;
+        }
+        
+        .result-container {
+            margin-top: 25px;
+            text-align: center;
+        }
+        
+        .result-label {
+            font-weight: 500;
+            margin-bottom: 15px;
+            color: var(--secondary-color);
+        }
+        
+        .formula-img {
+            display: block;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            max-width: 100%;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--border-radius);
+            text-decoration: none;
+            font-weight: 500;
+            margin-top: 10px;
+            transition: var(--transition);
+        }
+        
+        .cta-button:hover {
+            background: #3367d6;
+            transform: translateY(-2px);
+        }
+        
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 30px 0;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            margin-right: 8px;
+            position: relative;
+        }
+        
+        .status-indicator::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: -4px;
+            right: -4px;
+            bottom: -4px;
+            background-color: var(--secondary-color);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: pulse 1.5s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+            70% {
+                transform: scale(1.1);
+                opacity: 0.3;
+            }
+            100% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+        }
+        
+        .status-text {
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+        
+        footer {
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #5f6368;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+        }
+
+        .author-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-link:hover, .author-link:hover {
+            color: #3367d6;
+        }
+        
+        .footer-icon {
+            margin-right: 8px;
+            font-size: 1.2rem;
+        }
+        
+        .credit {
+            margin-top: 20px;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .tagline {
+                font-size: 1rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Google Charts API Replacement</h1>
+            <p class="tagline">A drop-in replacement for the Google Charts API text formula rendering service</p>
+        </header>
+        
+        <div class="card">
             <h2>Example Usage</h2>
-            <p>Original Google Charts URL:</p>
-            <code>https://chart.googleapis.com/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</code>
             
-            <p>Replacement URL (this server):</p>
-            <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</code>
+            <div class="url-container">
+                <p class="url-label">Original Google Charts URL:</p>
+                <code>https://chart.googleapis.com/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</code>
+            </div>
             
-            <p>Result:</p>
-            <img src="/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n" alt="Formula Example">
+            <div class="url-container">
+                <p class="url-label">Replacement URL (this server):</p>
+                <code>https://google-charts-formulas.vercel.app/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n</code>
+            </div>
+            
+            <div class="result-container">
+                <p class="result-label">Result:</p>
+                <img class="formula-img" src="/chart?cht=tx&chl=f(x) = \sum_{n=0}^{\infty} a_n x^n" alt="Formula Example">
+            </div>
         </div>
         
-        <p>See <a href="/examples" target="_blank" style="color: #0066cc; text-decoration: none;">more examples</a></p>
-        <p>Server status: <strong>Running</strong></p>
+        <div class="text-center">
+            <a href="/examples" class="cta-button">View More Examples</a>
+        </div>
         
-        <footer style="margin-top: 100px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666;">
-            <p>Found a bug? <a href="https://github.com/matiasbenedetto/google-apis-charts-dropin-replacement-for-formulas/issues" target="_blank" style="color: #0066cc; text-decoration: none;">Report it here!</a></p>
-            <p>Vibe implemented by <a href="https://mebenedetto.com" target="_blank" style="color: #0066cc; text-decoration: none;">Matias Benedetto</a></p>
-            <p><a href="https://github.com/matiasbenedetto/google-apis-charts-dropin-replacement-for-formulas" target="_blank" style="color: #0066cc; text-decoration: none;">Source code</a></p>
+        <div class="status-container">
+            <span class="status-indicator"></span>
+            <span class="status-text">Server Status: Running</span>
+        </div>
+        
+        <footer>
+            <div class="footer-links">
+                <a href="https://github.com/matiasbenedetto/google-apis-charts-dropin-replacement-for-formulas/issues" target="_blank" class="footer-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="footer-icon" viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    Report an Issue
+                </a>
+                <a href="https://github.com/matiasbenedetto/google-apis-charts-dropin-replacement-for-formulas" target="_blank" class="footer-link">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="footer-icon" viewBox="0 0 16 16">
+                        <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+                    </svg>
+                    Source Code
+                </a>
+            </div>
+            <p class="credit">Vibe-implemented by <a href="https://mebenedetto.com" class="author-link" target="_blank">Matias Benedetto</a></p>
         </footer>
-    </body>
+    </div>
+</body>
 </html>
