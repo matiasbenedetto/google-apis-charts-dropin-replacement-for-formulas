@@ -198,13 +198,6 @@ app.get('/chart', async (req, res) => {
     }
 });
 
-
-
-// serve examples.html
-app.get('/examples', (req, res) => {
-    res.sendFile(path.join(__dirname, 'examples.html'));
-});
-
 // For local development
 if (process.env.NODE_ENV !== 'production') {
     app.listen(PORT, () => {
