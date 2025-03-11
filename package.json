@@ -1,0 +1,29 @@
+{
+  "name": "google-charts-formula-replacement",
+  "version": "1.0.0",
+  "description": "A server-side drop-in replacement for Google Charts API text formula rendering",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "vercel-build": "echo 'Building for Vercel deployment'",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "google-charts",
+    "math",
+    "formula",
+    "latex",
+    "mathjax",
+    "tex"
+  ],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "canvas": "^2.11.2",
+    "express": "^4.18.2",
+    "mathjax-node": "^2.1.1"
+  }
+}
