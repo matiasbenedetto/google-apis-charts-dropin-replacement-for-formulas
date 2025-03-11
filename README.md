@@ -30,7 +30,7 @@ The server handles the request and generates an SVG image of the formula, just l
 
 ### Prerequisites
 
-- Node.js (v20.11.1 specifically required for deployment)
+- Node.js (v20.x required for deployment)
 - npm
 
 ### Setup
