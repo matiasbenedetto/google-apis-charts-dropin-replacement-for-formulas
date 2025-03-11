@@ -5,7 +5,8 @@
       "src": "server.js",
       "use": "@vercel/node",
       "config": {
-        "nodeVersion": "20.x"
+        "nodeVersion": "20.x",
+        "includeFiles": ["node_modules/sharp/**", "node_modules/mathjax/**", "node_modules/mathjax-node/**"]
       }
     }
   ],

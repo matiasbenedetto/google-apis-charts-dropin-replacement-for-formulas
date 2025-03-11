@@ -8,27 +8,33 @@
 
 const express = require('express');
 const path = require('path');
-// Use mathjax-node with explicit file paths for Vercel compatibility
 const mjAPI = require('mathjax-node');
-const sharp = require('sharp');
 const svg2img = require('svg2img');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Configure MathJax for serverless environment
+// Initialize MathJax-Node
 mjAPI.config({
-    MathJax: {
-        tex2jax: {
-            inlineMath: [],  // No inline math delimiters
-            displayMath: []  // No display math delimiters
-        }
+  MathJax: {
+    // Traditional MathJax configuration
+    SVG: {
+      font: "TeX",
+      linebreaks: { automatic: true },
+      mtextFontInherit: true
     },
-    // Disable automatic loading of components that might cause file system issues
-    fontURL: 'https://cdn.jsdelivr.net/npm/mathjax@2.7.9/fonts/HTML-CSS'
+    TeX: {
+      extensions: ["AMSmath.js", "AMSsymbols.js", "noErrors.js", "noUndefined.js"],
+      Macros: {
+        RR: "\\mathbb{R}",
+        NN: "\\mathbb{N}",
+        ZZ: "\\mathbb{Z}"
+      }
+    }
+  }
 });
 
-// Start MathJax
+// Start MathJax-Node
 mjAPI.start();
 
 // Serve a simple status page at the root
@@ -77,14 +83,10 @@ app.get('/chart', async (req, res) => {
     }
     
     try {
-        // console.log('Processing chart request with parameters:', req.query);
         // Decode the formula
         let formula = decodeURIComponent(chl);
         
         // Handle dollar signs in the formula
-        // For actual math expressions, we don't need to add delimiters
-        // MathJax-node will handle the formula correctly without explicit delimiters
-        
         // If the formula has single $ delimiters, remove them as they can cause issues
         if (formula.startsWith('$') && formula.endsWith('$') && 
             !(formula.startsWith('$$') && formula.endsWith('$$'))) {
@@ -93,12 +95,12 @@ app.get('/chart', async (req, res) => {
 
         // If the formula has escaped backslash delimiters, clean them up
         // as they might have been double-escaped in the URL
-        if (formula.includes('\\\(') || formula.includes('\\\)') || 
-            formula.includes('\\\[') || formula.includes('\\\]')) {
-            formula = formula.replace(/\\\\\(/g, '\\(')
-                       .replace(/\\\\\)/g, '\\)')
-                       .replace(/\\\\\[/g, '\\[')
-                       .replace(/\\\\\]/g, '\\]');
+        if (formula.includes('\\(') || formula.includes('\\)') || 
+            formula.includes('\\[') || formula.includes('\\]')) {
+            formula = formula.replace(/\\\(/g, '\\(')
+                       .replace(/\\\)/g, '\\)')
+                       .replace(/\\\[/g, '\\[')
+                       .replace(/\\\]/g, '\\]');
         }
         
         // Escape literal dollar signs in text to prevent them from being treated as delimiters
@@ -106,7 +108,7 @@ app.get('/chart', async (req, res) => {
         // In LaTeX, dollar signs should be escaped with a backslash: \$
         formula = formula.replace(/([^\\])\$(\d)/g, '$1\\$$2');
         
-        // Make sure any already escaped dollar signs (\$) are properly formatted for MathJax
+        // Make sure any already escaped dollar signs (\$) are properly formatted
         // This ensures that \$ is preserved as a literal dollar sign in the output
         if (formula.includes('\\$')) {
             formula = formula.replace(/\\\$/g, '\\$');
@@ -133,31 +135,32 @@ app.get('/chart', async (req, res) => {
             }
         }
         
-        // Process the formula with MathJax
-        // Wrap the formula in display math mode but without $ symbols
-        const result = await mjAPI.typeset({
-            math: formula,
-            format: 'TeX',
-            svg: true,
-            ex: 6,               // Font size scaling factor
-            width: 100,          // Width in ex units
-            linebreaks: true,     // Enable linebreaks
-            equationNumbers: 'none',  // No equation numbers
-            timeout: 30 * 1000    // Increase timeout for complex formulas
+        // Process the formula with MathJax-Node
+        const result = await new Promise((resolve, reject) => {
+            mjAPI.typeset({
+                math: formula,
+                format: "TeX",
+                svg: true,
+                ex: 6,
+                width: 100,
+                linebreaks: true,
+            }, function(data) {
+                if (!data.errors) {
+                    resolve(data);
+                } else {
+                    reject(new Error(data.errors));
+                }
+            });
         });
-        
-        // Apply styling to the SVG
+
+        // Get the SVG content
         let svgContent = result.svg;
-        
-        // We want to keep $ symbols in the formula as they are part of the math notation
-        // MathJax should have already processed the formula with the correct dollar signs
-        // No need to remove dollar signs from the SVG content as they are properly rendered
         
         // Apply text color if different from default black
         if (textColor !== '#000000') {
             svgContent = svgContent.replace(/<svg/, `<svg style="color: ${textColor};"`)
                                   .replace(/fill="currentColor"/g, `fill="${textColor}"`)
-                                  .replace(/stroke="currentColor"/g, `stroke="${textColor}"`);  
+                                  .replace(/stroke="currentColor"/g, `stroke="${textColor}"`);
         }
         
         // Check if we need to convert to PNG (for compatibility)
