@@ -9,7 +9,6 @@ This project provides a simple drop-in replacement for the Google Charts API tex
 - Server-side rendering using MathJax
 - Preserves all URL parameters and styling options
 - Support for both SVG and PNG output formats
-- Simple status page with usage examples
 
 ## How it Works
 
